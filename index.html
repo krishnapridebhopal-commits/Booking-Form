@@ -1,0 +1,738 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Krishna Pride Booking Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one calm column of white sections on a pale teal ground, with a sticky totals panel beside it on wide screens. */
+:root{
+--bg:#F2F7F7;
+--surface:#FFFFFF;
+--surface-2:#F7FAFA;
+--line:#D9E5E5;
+--fg:#1E2D2E;
+--muted:#587173;
+--accent:#3F8F8B;
+--accent-soft:#E2F1F0;
+--on-accent:#FFFFFF;
+--warn:#9A6414;
+--warn-soft:#FBF1DC;
+--font-display:"Fraunces",Georgia,serif;
+--font-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+--bg:#121A1B;--surface:#192425;--surface-2:#1E2B2C;--line:#2C3C3D;--fg:#E3EDED;--muted:#93AAAB;
+--accent:#6CC0BB;--accent-soft:#1E3534;--on-accent:#0D1E1E;--warn:#E5B96A;--warn-soft:#33291A;color-scheme:dark}}
+:root[data-theme="dark"]{
+--bg:#121A1B;--surface:#192425;--surface-2:#1E2B2C;--line:#2C3C3D;--fg:#E3EDED;--muted:#93AAAB;
+--accent:#6CC0BB;--accent-soft:#1E3534;--on-accent:#0D1E1E;--warn:#E5B96A;--warn-soft:#33291A;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.5;
+padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto}
+header.top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:12px 24px;margin-bottom:20px}
+header.top h1{font-family:var(--font-display);font-weight:600;font-size:clamp(26px,4vw,34px);line-height:1.15;margin:0;text-wrap:balance}
+header.top p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.contact{color:var(--muted);font-size:13px;text-align:right}
+.layout{display:grid;gap:20px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:1000px){.layout{grid-template-columns:minmax(0,1fr) 340px;align-items:start}.aside{position:sticky;top:16px}}
+.stack{display:flex;flex-direction:column;gap:20px;min-width:0}
+section.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+section.card>h2{font-family:var(--font-display);font-weight:600;font-size:20px;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13.5px;margin:0 0 16px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field>span,.lbl{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--surface-2);border:1px solid var(--line);border-radius:7px;padding:9px 10px;width:100%;min-width:0}
+select{appearance:auto}
+textarea{resize:vertical;min-height:64px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,summary:focus-visible,.chip input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.readout{background:var(--accent-soft);border-radius:7px;padding:9px 10px;font-weight:600;min-height:41px;display:flex;align-items:center}
+button{font:inherit;cursor:pointer}
+.btn{background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:11px 16px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn.block{width:100%}
+.link{background:none;border:0;color:var(--muted);text-decoration:underline;padding:4px}
+.add{margin-top:14px}
+/* function days */
+.day{border:1px solid var(--line);border-radius:10px;background:var(--surface-2);padding:16px;margin-top:14px}
+.day:first-of-type{margin-top:0}
+.dayhead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.dayhead h3{margin:0;font-size:16px;font-weight:700}
+.daytotal{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.warn{background:var(--warn-soft);color:var(--warn);border-radius:7px;padding:8px 10px;font-size:13px;margin:12px 0 0}
+.warn:empty{display:none}
+.meals{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.meal{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.mtoggle{display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:700}
+.mtoggle input{width:18px;height:18px;accent-color:var(--accent);padding:0}
+.msub{color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+.mbody{margin-top:12px;display:flex;flex-direction:column;gap:12px}
+.hint{color:var(--muted);font-size:13.5px;margin:0}
+details.menu{border:1px solid var(--line);border-radius:8px;background:var(--surface-2)}
+details.menu>summary{cursor:pointer;padding:10px 12px;font-weight:600;display:flex;justify-content:space-between;gap:10px;list-style:none}
+details.menu>summary::-webkit-details-marker{display:none}
+details.menu>summary::after{content:"+";color:var(--accent);font-weight:700}
+details.menu[open]>summary::after{content:"–"}
+.prog{color:var(--accent);font-weight:600;font-size:13px;margin-left:auto;margin-right:8px;white-space:nowrap}
+.menubody{padding:4px 12px 14px;display:flex;flex-direction:column;gap:14px}
+.cat h4{margin:0 0 6px;font-size:13px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.cat h4 small{font-weight:500;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{position:relative}
+.chip input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer}
+.chip span{display:block;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;font-size:13px}
+.chip input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.chip input:disabled{cursor:not-allowed}
+.chip input:disabled:not(:checked)+span{opacity:.45}
+.incl{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+/* rooms */
+.rooms{display:grid;gap:10px}
+.roomrow{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:10px;align-items:end}
+.roomname{font-weight:600;padding-bottom:10px}
+.roomname small{display:block;color:var(--muted);font-weight:400;font-size:12px}
+@media (max-width:560px){.roomrow{grid-template-columns:1fr 1fr}.roomname{grid-column:1/-1;padding-bottom:0}}
+/* totals */
+.aside{display:flex;flex-direction:column;gap:14px}
+.totals{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.totals h2{font-family:var(--font-display);font-size:19px;margin:0 0 10px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;font-variant-numeric:tabular-nums}
+.row span:first-child{color:var(--muted)}
+.row.big{border-top:1px solid var(--line);margin-top:6px;padding-top:12px;font-weight:700;font-size:17px}
+.row.big span:first-child{color:var(--fg)}
+.row.bal{background:var(--accent-soft);border-radius:7px;padding:9px 10px;margin-top:6px;font-weight:700}
+.row.bal span:first-child{color:var(--fg)}
+.sched{margin-top:14px;font-size:13.5px}
+.sched .lbl{display:block;margin-bottom:4px}
+.status{min-height:20px;font-size:13.5px;color:var(--accent);font-weight:600;margin:0}
+.status.err{color:var(--warn)}
+#copyBox{min-height:140px;font-size:12.5px}
+.terms{margin:0 0 14px;padding-left:20px;color:var(--muted);font-size:14px}
+.agree{display:flex;gap:10px;align-items:flex-start;cursor:pointer;margin-bottom:14px}
+.agree input{width:18px;height:18px;accent-color:var(--accent);padding:0;margin-top:2px;flex:none}
+.tabs{display:flex;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px;width:fit-content;max-width:100%;margin-bottom:20px}
+.tab{background:none;border:0;border-radius:7px;padding:8px 16px;font-weight:600;color:var(--muted)}
+.tab[aria-current="page"]{background:var(--accent);color:var(--on-accent)}
+.stats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px}
+.stat b{display:block;font-family:var(--font-display);font-size:22px;font-variant-numeric:tabular-nums;margin-top:2px}
+.stat span{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.bar input{flex:1 1 220px}.bar select{flex:0 1 180px;width:auto}
+.bk{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px 20px;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr) auto;align-items:center;margin-bottom:10px}
+@media (max-width:820px){.bk{grid-template-columns:1fr 1fr}.bk .acts{grid-column:1/-1;justify-content:flex-start}}
+.bk h3{margin:0 0 2px;font-size:16px}
+.bk small{color:var(--muted);display:block;font-variant-numeric:tabular-nums}
+.bk .pill{margin-top:6px}
+.bk b{font-variant-numeric:tabular-nums}
+.acts{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.acts select{width:auto;padding:7px 8px}
+.btn.sm{padding:7px 12px;font-size:14px}
+.btn.ghost.warnb{color:var(--warn);border-color:var(--warn)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.mute{background:var(--surface-2);color:var(--muted);border:1px solid var(--line)}
+.formbar{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.formbar b{font-family:var(--font-display);font-size:18px}
+.pays{display:grid;gap:8px;margin-top:14px}
+.pay{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:600;z-index:20;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:no-preference){.chip span,.btn{transition:background .15s,border-color .15s}}
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg);padding:20px;max-width:360px;width:calc(100% - 32px)}
+dialog::backdrop{background:rgba(0,0,0,.35)}
+.acct{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:13px;flex-wrap:wrap}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}[hidden]{display:none!important}
+</style></head><body>
+<main id="login" class="wrap" style="max-width:420px;margin-top:8vh" hidden>
+<section class="card">
+<h2>Krishna Pride Booking Desk</h2>
+<p class="sub">Admin sign in</p>
+<form id="loginForm">
+<label class="field"><span>Email</span><input id="lEmail" type="email" autocomplete="username" required></label>
+<label class="field" style="margin-top:12px"><span>Password</span><input id="lPass" type="password" autocomplete="current-password" required></label>
+<p class="warn" id="lErr"></p>
+<button class="btn block" style="margin-top:14px" id="lBtn">Sign in</button>
+</form>
+</section>
+</main>
+<dialog id="pwDlg">
+<form id="pwForm" method="dialog">
+<h2 style="margin:0 0 12px;font-size:18px">Change password</h2>
+<label class="field"><span>New password (8+ characters)</span><input id="pw1" type="password" autocomplete="new-password" minlength="8" required></label>
+<p class="warn" id="pwErr"></p>
+<div class="acts" style="margin-top:14px"><button type="button" class="btn ghost sm" id="pwCancel">Cancel</button><button class="btn sm" id="pwSave" type="submit">Save password</button></div>
+</form>
+</dialog>
+<div class="wrap" id="app" hidden>
+<header class="top">
+<div>
+<h1>Event &amp; Stay Bookings</h1>
+<p>Krishna Pride Marriage &amp; Banquet Hall · Pure vegetarian kitchen · Menu rates effective 01.05.2026</p>
+</div>
+<div class="contact">Plot No. 91, Sarvdharm ‘B’ Sector, Kolar Road, Bhopal<br>Reservations +91 74896 07795</div>
+<div class="acct"><span id="who"></span><button type="button" class="link" id="pwBtn">Change password</button><button type="button" class="link" id="outBtn">Sign out</button></div>
+</header>
+<nav class="tabs" aria-label="Sections">
+<button type="button" class="tab" data-view="list" aria-current="page">Bookings</button>
+<button type="button" class="tab" data-view="form" aria-current="false">New booking</button>
+</nav>
+<div id="viewList">
+<div class="stats" id="stats"></div>
+<p class="warn" id="listNote"></p>
+<div class="bar">
+<input id="fSearch" type="search" placeholder="Search by guest, mobile, city or booking no.">
+<select id="fStatus" aria-label="Filter by status"></select>
+<button type="button" class="btn" id="newBtn">+ New booking</button>
+</div>
+<div id="bList"><p class="hint">Loading bookings…</p></div>
+</div>
+<div id="viewForm" hidden>
+<div class="formbar"><button type="button" class="link" id="backBtn">← All bookings</button><b id="editLabel">New booking</b></div>
+<form id="bf" novalidate>
+<div class="layout">
+<div class="stack">
+<section class="card">
+<h2>Guest details</h2>
+<p class="sub">Who is booking, and how to reach them.</p>
+<div class="grid">
+<label class="field"><span>Title</span>
+<select id="gTitle"><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>M/s (Company)</option></select></label>
+<label class="field"><span>Guest name</span><input id="gName" type="text" placeholder="e.g. Alka Yagnic" autocomplete="off"></label>
+<label class="field"><span>Mobile</span><input id="gPhone" type="tel" inputmode="tel" placeholder="10-digit number"></label>
+<label class="field"><span>Email</span><input id="gEmail" type="email" placeholder="name@example.com"></label>
+<label class="field"><span>City</span><input id="gCity" type="text" placeholder="City"></label>
+<label class="field"><span>Booking received via</span>
+<select id="gSource"><option>Walk-in</option><option>Phone call</option><option>WhatsApp</option><option>Referral</option><option>Event planner / tour operator</option><option>Website / OTA</option></select></label>
+</div>
+</section>
+<section class="card">
+<h2>Event dates &amp; rooms</h2>
+<p class="sub">Stay dates for the whole event, then choose how many rooms of each category.</p>
+<div class="grid">
+<label class="field"><span>Check-in</span><input id="ckin" type="date"></label>
+<label class="field"><span>Check-out</span><input id="ckout" type="date"></label>
+<div class="field"><span>Nights</span><div class="readout" id="nights">–</div></div>
+<label class="field"><span>Extra mattress (₹750 / night)</span><select id="mattress"></select></label>
+</div>
+<div class="rooms" id="rooms" style="margin-top:18px"></div>
+</section>
+<section class="card">
+<h2>Functions, venue &amp; meals</h2>
+<p class="sub">Add one block for each event day. Switch on the meals you need and pick the menu.</p>
+<div id="days"></div>
+<button type="button" class="btn ghost add" id="addDay">+ Add another event day</button>
+</section>
+<section class="card">
+<h2>Other services</h2>
+<p class="sub">Charges agreed for the whole event, in ₹.</p>
+<div class="grid">
+<label class="field"><span>Music system</span><input id="music" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+<label class="field"><span>Decoration</span><input id="decor" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+<label class="field"><span>Room service food bill</span><input id="rservice" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+<label class="field"><span>GST</span>
+<select id="gst"><option value="0">Extra as applicable (not added)</option><option value="5">5%</option><option value="12">12%</option><option value="18">18%</option></select></label>
+</div>
+<label class="field" style="margin-top:14px"><span>Notes / special requests</span><textarea id="notes" placeholder="Jain food, live counters, decoration theme, arrival time…"></textarea></label>
+</section>
+<section class="card">
+<h2>Payment &amp; terms</h2>
+<p class="sub">Advance is 25% at the time of booking. Record each payment as it is received.</p>
+<div class="grid">
+<label class="field"><span>Amount received (₹)</span><input id="payAmt" type="number" min="0" inputmode="numeric" placeholder="0"></label>
+<label class="field"><span>Payment mode</span>
+<select id="payMode"><option>Cash</option><option>UPI</option><option>Debit / credit card</option><option>Bank transfer (NEFT / RTGS)</option><option>Cheque</option></select></label>
+<label class="field"><span>Date received</span><input id="payDate" type="date"></label>
+<label class="field"><span>Reference (optional)</span><input id="payNote" type="text" placeholder="UPI ref, cheque no."></label>
+</div>
+<button type="button" class="btn ghost add" id="addPay">+ Add payment</button>
+<div class="pays" id="pays"></div>
+<h3 style="font-size:15px;margin:20px 0 8px">Terms &amp; conditions</h3>
+<ol class="terms">
+<li>Advance payment of 25% to be paid at the time of booking.</li>
+<li>Part payment of 25% of the event amount to be paid one month before the event.</li>
+<li>Balance 50% of the event amount to be paid 20 days before the event date.</li>
+<li>Heavy music system / DJ is not allowed. Music may be played till 10.00 PM due to government compliance.</li>
+<li>GST extra as applicable.</li>
+</ol>
+<label class="agree"><input type="checkbox" id="agree"><span>Agreed on the above terms</span></label>
+<label class="field" style="max-width:360px"><span>Customer signature (type full name)</span><input id="sign" type="text" placeholder="Full name"></label>
+</section>
+</div>
+<div class="aside">
+<div class="totals">
+<h2>Booking total</h2>
+<div class="row"><span>Food &amp; beverages</span><span id="tFood">₹0</span></div>
+<div class="row"><span>Rooms &amp; mattresses</span><span id="tRooms">₹0</span></div>
+<div class="row"><span>Venue hire</span><span id="tVenue">₹0</span></div>
+<div class="row"><span>Function set-up</span><span id="tFn">₹0</span></div>
+<div class="row"><span>Music, decoration, room service</span><span id="tOther">₹0</span></div>
+<div class="row"><span>Subtotal</span><span id="tSub">₹0</span></div>
+<div class="row"><span id="gstLbl">GST</span><span id="tGst">₹0</span></div>
+<div class="row big"><span>Grand total</span><span id="tGrand">₹0</span></div>
+<div class="row"><span>Advance paid</span><span id="tAdv">₹0</span></div>
+<div class="row bal"><span>Balance to pay</span><span id="tBal">₹0</span></div>
+<div class="sched" id="sched"></div>
+</div>
+<label class="field"><span>Booking status</span><select id="bStatus"></select></label>
+<button type="button" class="btn block" id="saveBtn">Save booking</button>
+<button type="button" class="btn ghost block" id="copyBtn">Copy booking summary</button>
+<button type="button" class="btn ghost block" id="resetBtn">Start a new booking</button>
+<p class="status" id="status" role="status" aria-live="polite"></p>
+<textarea id="copyBox" hidden readonly aria-label="Booking summary"></textarea>
+</div>
+</div>
+</form>
+</div>
+</div>
+<div class="toast" id="toast" role="status" hidden></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+(function(){
+const L = s => s.split(' · ');
+const $ = s => document.querySelector(s);
+const inr = n => '₹' + Math.round(n || 0).toLocaleString('en-IN');
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+/* ---------- menu data (from the four price-list PDFs) ---------- */
+const SOUP = L('Tomato · Hot & Sour · Veg Manchow · Lemon Coriander · Dal Shorba · Tomato Shorba · Veg Clear · Veg Sweet Corn');
+const SOUP9 = SOUP.concat('Cream of Mushroom');
+const KOFTA = L('Veg Kofta · Hariyali Kofta · Malai Kofta · Methi Matar Malai · Dum Aloo · Stuffed Tomato with Capsicum · Chole Aloo');
+const KOFTA10 = L('Veg Kofta · Hariyali Kofta · Shahi Kofta · Malai Kofta · Methi Matar Malai · Dum Aloo · Stuffed Tomato with Capsicum · Veg Makhani · Navratan Korma · Kadhi Pakoda');
+const PANEER = L('Matar Paneer · Paneer Butter Masala · Kadhai Paneer · Shahi Paneer · Palak Paneer · Paneer Kolhapuri · Paneer Lababdar · Paneer Jalfrezi · Paneer Do Pyaza · Handi Paneer · Paneer Hyderabadi');
+const RAITA8 = L('Veg · Pineapple · Boondi · Cucumber · Fruit · Mint · Onion · Dahi Vada');
+const SVEG11 = L('Mixed Vegetable · Bhindi Masala · Sunahri Bhindi · Bhindi Do Pyaza · Aloo Gobhi Matar · Aloo Methi Matar · Aloo Jeera · Aloo Tamatar · Corn Palak · Baingan Bharta · Veg Kolhapuri');
+const RICE8 = L('Steamed Rice · Jeera Rice · Veg Pulao · Matar Pulao · Corn Fried Rice · Veg Fried Rice · Masala Rice · Garlic Fried Rice');
+const HALWA = 'Gajar Halwa · Sooji Halwa · Moong Dal Halwa';
+const SALAD5 = L('Green Salad · Kachumber Salad · Aloo Chana Chaat · Mixed Sprouted Salad · Russian Salad');
+const ICE = 'Vanilla · Strawberry · Plain Pista · Chocolate';
+const G = (title, n, items) => ({title, n, items: Array.isArray(items) ? items : L(items)});
+const MENUS = {
+banquet:{name:'Banquet', price:649, water:'Pure R.O. drinking water from 20 litre cans', groups:[
+G('Soup',1,SOUP),
+G('Starters',1,'Hara Bhara Kebab · Veg Corn Kebab · Veg Manchurian · Gobhi Manchurian · Veg Kothe · Chilli Corn · Mixed Veg Pakoda · Honey Chilli Potato · Finger Chips · Veg Lollipop'),
+G('Raita',1,'Veg · Pineapple · Boondi · Cucumber · Fruit · Dahi Vada · Kadhi Pakoda'),
+G('Seasonal Veg',1,'Mixed Vegetable · Bhindi Masala · Bhindi Kurkuri · Aloo Gobhi Matar · Aloo Jeera · Aloo Chokha · Aloo Tamatar · Sev Tamatar · Corn Palak · Baingan Bharta · Veg Kolhapuri · Chana Masala · Rajma Masala'),
+G('Kofta & Curry',1,KOFTA),
+G('Dal',1,'Dal Tadka · Dal Fry · Dal Palak · Dal Masala · Jain Dal · Kadhi Pakoda · Dal Mughlai'),
+G('Rice',1,'Steamed Rice · Jeera Rice · Veg Pulao · Matar Pulao · Corn Fried Rice'),
+G('Breads',2,'Tawa Roti · Plain Poori · Masala Poori · Tandoori Roti'),
+G('Salad',1,'Green Salad · Kachumber Salad · Mixed Sprouted Salad'),
+G('Sweet',1,'Gulab Jamun · '+HALWA+' · Rice Kheer · Fruit Custard')]},
+deluxe:{name:'Deluxe Banquet', price:749, water:'Pure R.O. drinking water from 20 litre cans', groups:[
+G('Welcome Drinks',1,'Soft Drink · Chaach · Jal Jeera · Mojito'),
+G('Soup',2,SOUP),
+G('Starters',2,'Hara Bhara Kebab · Veg Corn Kebab · Veg Manchurian · Gobhi Manchurian · Veg Kothe · Chilli Corn · Mixed Veg Pakoda · Honey Chilli Potato · Crispy Corn · Crispy Veg · Finger Chips'),
+G('Paneer',1,PANEER),
+G('Raita',1,'Veg · Pineapple · Boondi · Cucumber · Fruit · Mint · Onion · Dahi Vada · Kadhi Pakoda'),
+G('Seasonal Veg',1,SVEG11),
+G('Kofta & Curry',1,KOFTA),
+G('Dal',1,'Dal Tadka · Dal Fry · Dal Palak · Chana Masala · Rajma Masala · Dal Bukhara · Jain Dal'),
+G('Rice',1,RICE8),
+G('Breads',2,'Plain Poori · Masala Poori · Palak Poori · Methi Poori · Bread Basket (Tandoori Roti, Naan, Missi Roti)'),
+G('Sweet',1,'Gulab Jamun · '+HALWA+' · Rabdi Jalebi · Rice Kheer · Fruit Custard · Shahi Tukda'),
+G('Salad',2,SALAD5)]},
+luxury:{name:'Luxury Banquet', price:899, water:'Sealed mineral water bottles', groups:[
+G('Beverages',2,'Soft Drink · Chaach · Lassi · Jal Jeera · Cold Coffee'),
+G('Starters',3,'Paneer Tikka · Hara Bhara Kebab · Veg Corn Kebab · Veg Manchurian · Gobhi Manchurian · Veg Kothe · Veg Spring Roll · Chilli Corn · Mixed Veg Pakoda · Honey Chilli Potato · Crispy Corn · Crispy Veg · Palak Chilli · Fried Idli · Finger Chips'),
+G('Chatpati Chaat',1,'Pani Poori · Aloo Tikki · Bhel Poori · Chaat Papdi · Veg Noodles · Aloo Matar Handi Chaat'),
+G('Soup',2,SOUP9),
+G('Paneer',1,PANEER),
+G('Raita',1,RAITA8),
+G('Seasonal Veg',2,SVEG11),
+G('Kofta & Curry',1,KOFTA10),
+G('Dal',1,'Dal Tadka · Dal Fry · Dal Palak · Jain Dal · Dal Mughlai'),
+G('Rice',2,RICE8),
+G('Breads',3,'Tawa Roti · Plain Poori · Masala Poori · Palak Poori · Methi Poori · Bread Basket'),
+G('Sweet',2,'Gulab Jamun · '+HALWA+' · Rabdi Jalebi · Rice Kheer · Fruit Custard · Shahi Tukda · Ras Malai · Chhena Murki · Angoori Petha · Mini Rasgulla'),
+G('Ice Cream',2,ICE+' · Butterscotch'),
+G('Salad',2,SALAD5)]},
+reception:{name:'Wedding Reception', price:1149, water:'Sealed mineral water bottles', groups:[
+G('Beverages',3,'Soft Drink · Chaach · Lemon Soda · Fresh Lime · Sweet Lassi'),
+G('Welcome Starters',4,'Paneer Tikka · Hara Bhara Kebab · Veg Shami Kebab · Veg Corn Kebab · Veg Manchurian · Gobhi Manchurian · Veg Kothe · Chilli Corn · Soya Chaap · Mixed Veg Pakoda · Honey Chilli Potato · Mini Samosa · Mini Kachori · Paneer Roll · Cheese Roll · Cheese Ball'),
+G('Chatpati Chaat',2,'Pani Poori · Aloo Tikki · Bhel Poori · Chaat Papdi · Veg Manchurian · Aloo Matar Handi Chaat · Veg Mangode · Crispy Corn · Dahi Gujiya · Dahi Bhalla · Aloo Vada · Bhaji Vada · Fruit Chaat · American Crispy Corn · Kala Chana Chaat'),
+G('Soup',2,'Cream of Tomato · Hot & Sour · Sweet Corn · Veg Manchow · Lemon Coriander · Veg Clear · Dal Shorba · Tomato Shorba'),
+G('Paneer',1,'Matar Paneer · Butter Paneer Masala · Kadhai Paneer · Shahi Paneer · Palak Paneer · Paneer Kolhapuri · Paneer Lababdar · Paneer Jalfrezi · Paneer Do Pyaza · Handi Paneer'),
+G('Raita',2,RAITA8),
+G('Seasonal Veg',2,SVEG11),
+G('Kofta & Curry',2,KOFTA10),
+G('Dal',2,'Dal Tadka · Dal Fry · Dal Palak · Hariyali Dal · Jain Dal · Dal Mughlai'),
+G('Rice',2,'Steamed Rice · Jeera Rice · Veg Pulao · Matar Pulao · Corn Fried Rice · Hyderabadi Veg Biryani · Kashmiri Pulao'),
+G('Breads',3,'Tawa Roti · Plain Poori · Masala Poori · Palak Poori · Methi Poori · Missi Roti'),
+G('Sweet',3,'Gulab Jamun · Mawa Bati · Kala Jamun · Rasgulla · Rajbhog · '+HALWA+' · Rabdi Jalebi · Rice Kheer · Fruit Custard · Shahi Tukda · Mango Kheer · Shrikhand · Mango Kalakand · Ras Malai · Chhena Murki · Angoori Petha · Mini Rasgulla'),
+G('Ice Cream',2,ICE+' · Mango · Butterscotch'),
+G('Salad',2,SALAD5.concat('Mixed Fruit Salad','Peanut Chaat')),
+G('Hot Drinks',2,'Tea · Coffee · Kesar Milk')]}
+};
+/* Breakfast and high tea items come from the event quotation sheet */
+const SLOTS = {
+bf:{label:'Breakfast', times:['08.00 AM – 10.00 AM','09.00 AM – 11.00 AM'], rates:[200,275],
+items:L('Poha · Jalebi · Bhajiya · Aloo Bada · Idli Sambhar · Wada Sambhar · Sandwich · Mangode · Fried Idli · Tea · Coffee')},
+lunch:{label:'Lunch', times:['01.30 PM – 03.30 PM','02.00 PM – 04.00 PM'], plan:true},
+ht:{label:'High Tea', times:['08.30 AM','02.00 PM'], rates:[80,150],
+items:L('Tea · Coffee · Samosa (Small) · Moongode · Veg Sandwich · Biscuit')},
+dinner:{label:'Dinner', times:['08.00 PM – 11.00 PM'], plan:true}
+};
+const KEYS = ['bf','lunch','ht','dinner'];
+const FUNCTIONS = {'Wedding':0,'Mehandi':12000,'Haldi':8000,'Bhat':0,'Ladies Sangeet':12000,'Mundup (Mandap)':11000,'Wedding Reception':20000,'Engagement':0,'Birthday party':0,'Corporate event':0,'Get-together':0,'Other':0};
+const VENUES = {'Darbar Hall':{cap:250,label:'Darbar Hall (AC, up to 250 pax)',charge:20000},'Celebration Hall':{cap:80,label:'AC Celebration Hall (up to 80 pax)',charge:0},'Rooftop Garden':{cap:200,label:'Rooftop Garden (up to 200 pax)',charge:0},'None':{cap:0,label:'No venue, rooms / catering only',charge:0}};
+const ROOMS = [['Deluxe',6],['Super Deluxe',4],['Executive',6],['Premium Executive',4],['KP Suite',2]];
+const MATTRESS = 750;
+/* ---------- state ---------- */
+let uid = 0, days = [];
+const newMeal = on => ({on, pax:'', time:'', rate:'', plan:'', sel:{}, note:'', open:false});
+const newDay = () => ({id:++uid, date:'', fn:'', venue:'', venueCharge:'', fnCharge:'', meals:{bf:newMeal(false), lunch:newMeal(true), ht:newMeal(false), dinner:newMeal(true)}});
+const opts = (list, cur, ph) => (ph ? `<option value="">${esc(ph)}</option>` : '') +
+list.map(o => { const v = Array.isArray(o) ? o[0] : o, l = Array.isArray(o) ? o[1] : o; return `<option value="${esc(v)}"${String(v) === String(cur) ? ' selected' : ''}>${esc(l)}</option>`; }).join('');
+function groupsFor(k, m){
+if (SLOTS[k].plan) return m.plan ? MENUS[m.plan].groups.map((g, i) => ({key:String(i), title:g.title, n:g.n, items:g.items})) : [];
+return [{key:'items', title:'Choose items', n:0, items:SLOTS[k].items}];
+}
+const rateOf = (k, m) => SLOTS[k].plan ? (m.plan ? MENUS[m.plan].price : 0) : (Number(m.rate) || 0);
+function mealHTML(d, k){
+const S = SLOTS[k], m = d.meals[k];
+let h = `<div class="mhead"><label class="mtoggle"><input type="checkbox" data-m="on"${m.on ? ' checked' : ''}><span>${S.label}</span></label><span class="msub" data-sub></span></div>`;
+if (!m.on) return h;
+const planOrRate = S.plan
+? `<label class="field"><span>Menu plan (per plate)</span><select data-m="plan">${opts(Object.entries(MENUS).map(([v, p]) => [v, `${p.name} · ₹${p.price.toLocaleString('en-IN')}`]), m.plan, 'Select a plan')}</select></label>`
+: `<label class="field"><span>Rate per person</span><select data-m="rate">${opts(S.rates.map(r => [r, '₹' + r]), m.rate, 'Select rate')}</select></label>`;
+h += `<div class="mbody"><div class="grid">
+<label class="field"><span>Timing</span><select data-m="time">${opts(S.times, m.time, 'Select timing')}</select></label>
+<label class="field"><span>No. of pax</span><input type="number" min="0" inputmode="numeric" data-m="pax" value="${esc(m.pax)}" placeholder="e.g. 100"></label>
+${planOrRate}</div>`;
+const gs = groupsFor(k, m);
+if (!gs.length) h += `<p class="hint">Choose a menu plan to see what you can pick for ${S.label.toLowerCase()}.</p>`;
+else {
+h += `<details class="menu"${m.open ? ' open' : ''}><summary><span>Choose menu</span><span class="prog" data-prog></span></summary><div class="menubody">`;
+gs.forEach(g => {
+const chosen = m.sel[g.key] || [];
+h += `<div class="cat" data-cat="${g.key}" data-n="${g.n}"><h4>${esc(g.title)} <small>${g.n ? 'Any ' + ['','one','two','three','four'][g.n] + ' · <b data-cnt>0/' + g.n + '</b>' : 'Pick any'}</small></h4><div class="chips">` +
+g.items.map(it => `<label class="chip"><input type="checkbox" data-chip value="${esc(it)}"${chosen.includes(it) ? ' checked' : ''}><span>${esc(it)}</span></label>`).join('') + `</div></div>`;
+});
+if (S.plan) h += `<div class="incl">Included with every plan: Achaar · Papad · ${esc(MENUS[m.plan].water)}.</div>`;
+h += `</div></details>`;
+}
+h += `<label class="field"><span>Special requests for ${S.label.toLowerCase()}</span><input type="text" data-m="note" value="${esc(m.note)}" placeholder="Jain, live counter, no onion-garlic…"></label></div>`;
+return h;
+}
+function dayHTML(d, i){
+return `<article class="day" data-day="${d.id}">
+<div class="dayhead"><h3>Event day ${i + 1}</h3><span class="daytotal" data-daytotal></span>
+<button type="button" class="link" data-act="remove">Remove</button></div>
+<div class="grid">
+<label class="field"><span>Date</span><input type="date" data-f="date" value="${esc(d.date)}"></label>
+<label class="field"><span>Function</span><select data-f="fn">${opts(Object.keys(FUNCTIONS), d.fn, 'Select function')}</select></label>
+<label class="field"><span>Functional venue</span><select data-f="venue">${opts(Object.entries(VENUES).map(([v, o]) => [v, o.label]), d.venue, 'Select venue')}</select></label>
+<label class="field"><span>Venue charge (₹)</span><input type="number" min="0" inputmode="numeric" data-f="venueCharge" value="${esc(d.venueCharge)}" placeholder="0"></label>
+<label class="field"><span>Function set-up charge (₹)</span><input type="number" min="0" inputmode="numeric" data-f="fnCharge" value="${esc(d.fnCharge)}" placeholder="0"></label>
+</div>
+<p class="warn" data-warn></p>
+<div class="meals">${KEYS.map(k => `<div class="meal" data-meal="${k}">${mealHTML(d, k)}</div>`).join('')}</div>
+</article>`;
+}
+const daysEl = $('#days');
+function renderDays(){
+daysEl.innerHTML = days.map(dayHTML).join('');
+days.forEach(d => KEYS.forEach(k => refreshMeal(d, k)));
+recalc();
+}
+function renderMeal(d, k){
+const el = daysEl.querySelector(`[data-day="${d.id}"] [data-meal="${k}"]`);
+el.innerHTML = mealHTML(d, k);
+refreshMeal(d, k); recalc();
+}
+/* update chip limits and counters without re-rendering (keeps keyboard focus) */
+function refreshMeal(d, k){
+const el = daysEl.querySelector(`[data-day="${d.id}"] [data-meal="${k}"]`), m = d.meals[k];
+if (!el || !m.on) return;
+let need = 0, got = 0, free = 0;
+el.querySelectorAll('.cat').forEach(c => {
+const n = Number(c.dataset.n), boxes = [...c.querySelectorAll('input[data-chip]')];
+const cnt = boxes.filter(b => b.checked).length;
+boxes.forEach(b => { b.disabled = n > 0 && cnt >= n && !b.checked; });
+const lab = c.querySelector('[data-cnt]'); if (lab && n) lab.textContent = cnt + '/' + n;
+if (n) { need += n; got += Math.min(cnt, n); } else free += cnt;
+});
+const p = el.querySelector('[data-prog]');
+if (p) p.textContent = need ? `${got} of ${need} picked` : `${free} selected`;
+}
+function onField(e){
+const t = e.target, dayEl = t.closest('.day'); if (!dayEl) return;
+const isChoice = t.tagName === 'SELECT' || t.type === 'checkbox';
+if ((e.type === 'input') === isChoice) return;
+const d = days.find(x => x.id == dayEl.dataset.day), mealEl = t.closest('.meal');
+if (t.dataset.chip !== undefined){
+const k = mealEl.dataset.meal, m = d.meals[k], cat = t.closest('.cat'), key = cat.dataset.cat, n = Number(cat.dataset.n);
+let arr = m.sel[key] || [];
+if (t.checked){ if (n && arr.length >= n){ t.checked = false; return; } arr = arr.concat(t.value); }
+else arr = arr.filter(x => x !== t.value);
+m.sel[key] = arr; refreshMeal(d, k); return;
+}
+if (t.dataset.f){
+const f = t.dataset.f, v = t.value; d[f] = v;
+if (f === 'venue'){ d.venueCharge = v && VENUES[v].charge ? VENUES[v].charge : ''; dayEl.querySelector('[data-f="venueCharge"]').value = d.venueCharge; }
+if (f === 'fn'){ d.fnCharge = FUNCTIONS[v] || ''; dayEl.querySelector('[data-f="fnCharge"]').value = d.fnCharge; }
+recalc(); return;
+}
+if (t.dataset.m){
+const k = mealEl.dataset.meal, m = d.meals[k], f = t.dataset.m;
+if (f === 'on'){ m.on = t.checked; renderMeal(d, k); return; }
+if (f === 'plan'){ m.plan = t.value; m.sel = {}; renderMeal(d, k); return; }
+m[f] = t.value; recalc();
+}
+}
+daysEl.addEventListener('input', onField);
+daysEl.addEventListener('change', onField);
+daysEl.addEventListener('toggle', e => {
+const t = e.target; if (!t.matches || !t.matches('details.menu')) return;
+const d = days.find(x => x.id == t.closest('.day').dataset.day); d.meals[t.closest('.meal').dataset.meal].open = t.open;
+}, true);
+daysEl.addEventListener('click', e => {
+const b = e.target.closest('[data-act="remove"]'); if (!b) return;
+const id = b.closest('.day').dataset.day; days = days.filter(x => x.id != id);
+if (!days.length) days.push(newDay());
+renderDays();
+});
+$('#addDay').addEventListener('click', () => { days.push(newDay()); renderDays(); daysEl.lastElementChild.scrollIntoView({behavior:'smooth', block:'start'}); });
+/* ---------- rooms & static fields ---------- */
+$('#rooms').innerHTML = ROOMS.map(([n, max], i) =>
+`<div class="roomrow"><div class="roomname">${n}<small>${max} rooms available</small></div>
+<label class="field"><span>Rooms</span><select id="rc${i}">${opts(Array.from({length:max + 1}, (_, j) => j), 0)}</select></label>
+<label class="field"><span>Rate / room / night (₹)</span><input id="rr${i}" type="number" min="0" inputmode="numeric" placeholder="0"></label></div>`).join('');
+$('#mattress').innerHTML = opts(Array.from({length:31}, (_, j) => j), 0);
+const num = id => Number($('#' + id).value) || 0;
+const parseD = s => { if (!s) return null; const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const fmtD = d => d.toLocaleDateString('en-IN', {day:'2-digit', month:'short', year:'numeric'});
+let T = {};
+function recalc(){
+let food = 0, venue = 0, fn = 0;
+days.forEach(d => {
+const el = daysEl.querySelector(`[data-day="${d.id}"]`); if (!el) return;
+let dayFood = 0, maxPax = 0;
+KEYS.forEach(k => {
+const m = d.meals[k], sub = el.querySelector(`[data-meal="${k}"] [data-sub]`), pax = Number(m.pax) || 0, r = rateOf(k, m);
+const s = m.on ? pax * r : 0; dayFood += s; if (m.on) maxPax = Math.max(maxPax, pax);
+sub.textContent = !m.on ? '' : (pax && r ? `${pax} pax × ${inr(r)} = ${inr(s)}` : (r ? inr(r) + ' per plate' : ''));
+});
+const v = Number(d.venueCharge) || 0, f = Number(d.fnCharge) || 0;
+food += dayFood; venue += v; fn += f;
+el.querySelector('[data-daytotal]').textContent = (dayFood + v + f) ? 'Day total ' + inr(dayFood + v + f) : '';
+const cap = d.venue && VENUES[d.venue] ? VENUES[d.venue].cap : 0;
+el.querySelector('[data-warn]').textContent = cap && maxPax > cap ? `${maxPax} pax is above the ${d.venue} capacity of ${cap}. Choose another venue or reduce the pax.` : '';
+});
+const a = parseD($('#ckin').value), b = parseD($('#ckout').value);
+const nights = a && b && b > a ? Math.round((b - a) / 864e5) : 0;
+$('#nights').textContent = nights ? nights + (nights > 1 ? ' nights' : ' night') : '–';
+let rooms = 0; ROOMS.forEach((_, i) => { rooms += num('rc' + i) * num('rr' + i) * nights; });
+rooms += num('mattress') * MATTRESS * nights;
+const other = num('music') + num('decor') + num('rservice');
+const sub = food + rooms + venue + fn + other, gstR = num('gst'), gst = sub * gstR / 100, grand = sub + gst, adv = payments.reduce((s, p) => s + p.amt, 0), bal = grand - adv;
+T = {food, rooms, venue, fn, other, sub, gstR, gst, grand, adv, bal, nights};
+const set = (id, v) => $('#' + id).textContent = inr(v);
+set('tFood', food); set('tRooms', rooms); set('tVenue', venue); set('tFn', fn); set('tOther', other);
+set('tSub', sub); set('tGst', gst); set('tGrand', grand); set('tAdv', adv); set('tBal', bal);
+$('#gstLbl').textContent = gstR ? `GST @ ${gstR}%` : 'GST (extra as applicable)';
+const dates = days.map(d => parseD(d.date)).filter(Boolean).sort((x, y) => x - y);
+const sc = $('#sched');
+if (dates.length && grand){
+const ev = dates[0], p2 = new Date(ev); p2.setMonth(p2.getMonth() - 1); const p3 = new Date(ev); p3.setDate(p3.getDate() - 20);
+T.sched = [['At booking · 25%', grand * .25], ['By ' + fmtD(p2) + ' · 25%', grand * .25], ['By ' + fmtD(p3) + ' · 50%', grand * .5]];
+sc.innerHTML = '<span class="lbl">Payment schedule</span>' + T.sched.map(r => `<div class="row"><span>${r[0]}</span><span>${inr(r[1])}</span></div>`).join('');
+} else { T.sched = null; sc.innerHTML = '<span class="lbl">Payment schedule</span><span class="hint">Appears once an event date and charges are entered.</span>'; }
+}
+$('#bf').addEventListener('input', e => { if (!e.target.closest('#days')) recalc(); });
+$('#bf').addEventListener('change', e => { if (!e.target.closest('#days')) recalc(); });
+$('#bf').addEventListener('submit', e => e.preventDefault());
+/* ---------- summary ---------- */
+function summary(){
+const v = id => $('#' + id).value.trim(), out = [];
+out.push('KRISHNA PRIDE · BOOKING', '');
+out.push(`Guest: ${$('#gTitle').value} ${v('gName')}`, `Mobile: ${v('gPhone')}${v('gEmail') ? ' · ' + v('gEmail') : ''}${v('gCity') ? ' · ' + v('gCity') : ''}`, `Booked via: ${$('#gSource').value}`);
+if (v('ckin') && v('ckout')) out.push(`Stay: ${fmtD(parseD(v('ckin')))} to ${fmtD(parseD(v('ckout')))} (${T.nights} nights)`);
+const rl = ROOMS.map(([n], i) => num('rc' + i) ? `${num('rc' + i)} ${n} @ ${inr(num('rr' + i))}` : '').filter(Boolean);
+if (rl.length) out.push('Rooms: ' + rl.join(', ')); if (num('mattress')) out.push(`Extra mattress: ${num('mattress')} @ ₹${MATTRESS}/night`);
+days.forEach((d, i) => {
+out.push('', `DAY ${i + 1} · ${d.date ? fmtD(parseD(d.date)) : 'date pending'} · ${d.fn || 'Function pending'} · ${d.venue || 'Venue pending'}`);
+if (Number(d.venueCharge)) out.push(`  Venue charge: ${inr(d.venueCharge)}`); if (Number(d.fnCharge)) out.push(`  Function set-up: ${inr(d.fnCharge)}`);
+KEYS.forEach(k => {
+const m = d.meals[k]; if (!m.on) return;
+const r = rateOf(k, m); out.push(`  ${SLOTS[k].label}${m.time ? ' (' + m.time + ')' : ''}: ${m.pax || 0} pax × ${inr(r)}${SLOTS[k].plan && m.plan ? ' · ' + MENUS[m.plan].name : ''}`);
+groupsFor(k, m).forEach(g => { const s = m.sel[g.key] || []; if (s.length) out.push(`    ${g.title}: ${s.join(', ')}`); });
+if (m.note) out.push(`    Note: ${m.note}`);
+});
+});
+out.push('', `Food & beverages ${inr(T.food)} · Rooms ${inr(T.rooms)} · Venue ${inr(T.venue)} · Function set-up ${inr(T.fn)} · Other ${inr(T.other)}`);
+out.push(`Subtotal ${inr(T.sub)}${T.gstR ? ` + GST ${T.gstR}% ${inr(T.gst)}` : ' (GST extra as applicable)'}`, `GRAND TOTAL ${inr(T.grand)}`, `Paid ${inr(T.adv)} · Balance ${inr(T.bal)}`);
+if (v('notes')) out.push('', 'Notes: ' + v('notes'));
+out.push('', `Terms: ${$('#agree').checked ? 'agreed' : 'not yet agreed'}${v('sign') ? ' · Signed: ' + v('sign') : ''}`);
+return out.join('\n');
+}
+let tt; const status = (msg, err) => { const s = $('#status'); s.textContent = msg; s.className = 'status' + (err ? ' err' : ''); const t = $('#toast'); clearTimeout(tt); if (!msg){ t.hidden = true; return; } t.textContent = msg; t.hidden = false; tt = setTimeout(() => { t.hidden = true; }, 3500); };
+$('#copyBtn').addEventListener('click', () => {
+if (!$('#gName').value.trim() || !$('#gPhone').value.trim()){ status('Add the guest name and mobile number first.', true); (!$('#gName').value.trim() ? $('#gName') : $('#gPhone')).focus(); return; }
+recalc(); const txt = summary(), box = $('#copyBox');
+const fallback = () => { box.hidden = false; box.value = txt; box.select(); status('Select and copy the summary below.'); };
+try { navigator.clipboard.writeText(txt).then(() => { box.hidden = true; status('Booking summary copied.'); }, fallback); } catch (_) { fallback(); }
+});
+/* ---------- saved bookings ---------- */
+const SB_URL = 'https://gbwrumcxlvqajlcnocxu.supabase.co', SB_KEY = 'sb_publishable_gQRhNgVV9Yl13xz_fpakmw_6H6-wyIw';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+let payments = [], editing = null, bookings = [], rowsById = {}, pendingDel = null, saving = false;
+const STATUSES = ['Enquiry','Tentative','Confirmed','Completed','Cancelled'];
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`; };
+const pillClass = s => s === 'Confirmed' ? '' : (s === 'Enquiry' || s === 'Tentative') ? ' warn' : ' mute';
+$('#bStatus').innerHTML = opts(STATUSES, 'Enquiry');
+$('#fStatus').innerHTML = opts([['', 'All statuses']].concat(STATUSES), '');
+function show(v){
+$('#viewList').hidden = v !== 'list'; $('#viewForm').hidden = v !== 'form';
+document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === v ? 'page' : 'false'));
+window.scrollTo(0, 0);
+}
+function renderPayments(){
+$('#pays').innerHTML = payments.map((p, i) => `<div class="pay"><span>${p.date ? fmtD(parseD(p.date)) : ''} · ${esc(p.mode)}${p.note ? ' · ' + esc(p.note) : ''}</span><span><b>${inr(p.amt)}</b> <button type="button" class="link" data-rm="${i}">Remove</button></span></div>`).join('');
+recalc();
+}
+$('#addPay').addEventListener('click', () => {
+const amt = num('payAmt');
+if (amt <= 0){ status('Enter the amount received.', true); $('#payAmt').focus(); return; }
+payments.push({amt, mode:$('#payMode').value, date:$('#payDate').value || today(), note:$('#payNote').value.trim()});
+$('#payAmt').value = ''; $('#payNote').value = ''; renderPayments();
+});
+$('#pays').addEventListener('click', e => { const b = e.target.closest('[data-rm]'); if (!b) return; payments.splice(Number(b.dataset.rm), 1); renderPayments(); });
+function collect(){
+recalc();
+const v = id => $('#' + id).value;
+const ds = JSON.parse(JSON.stringify(days));
+const dates = ds.map(d => d.date).filter(Boolean).sort();
+return {
+title:v('gTitle'), name:v('gName').trim(), phone:v('gPhone').trim(), email:v('gEmail').trim(), city:v('gCity').trim(), source:v('gSource'),
+ckin:v('ckin'), ckout:v('ckout'), mattress:num('mattress'),
+rooms:ROOMS.map((_, i) => ({c:num('rc' + i), r:num('rr' + i)})),
+days:ds, music:v('music'), decor:v('decor'), rservice:v('rservice'), gst:v('gst'), notes:v('notes').trim(),
+payments:payments.slice(), agree:$('#agree').checked, sign:v('sign').trim(), status:v('bStatus'),
+firstDate:dates[0] || '', fnLabel:[...new Set(ds.map(d => d.fn).filter(Boolean))].join(', '),
+totals:{grand:Math.round(T.grand), paid:Math.round(T.adv), balance:Math.round(T.bal)}
+};
+}
+function fill(b){
+$('#bf').reset();
+const set = (id, x) => { $('#' + id).value = x == null ? '' : x; };
+set('gTitle', b.title); set('gName', b.name); set('gPhone', b.phone); set('gEmail', b.email); set('gCity', b.city); set('gSource', b.source);
+set('ckin', b.ckin); set('ckout', b.ckout); set('mattress', b.mattress || 0);
+(b.rooms || []).forEach((r, i) => { if (!$('#rc' + i)) return; set('rc' + i, r.c || 0); set('rr' + i, r.r || ''); });
+set('music', b.music); set('decor', b.decor); set('rservice', b.rservice); set('gst', b.gst || '0'); set('notes', b.notes);
+set('sign', b.sign); $('#agree').checked = !!b.agree; set('bStatus', b.status || 'Enquiry');
+days = (b.days && b.days.length) ? b.days : [newDay()];
+uid = Math.max(uid, ...days.map(d => d.id || 0));
+payments = (b.payments || []).slice();
+$('#payDate').value = today();
+renderDays(); renderPayments();
+}
+function newBooking(){
+editing = null; $('#bf').reset(); days = [newDay()]; payments = [];
+$('#bStatus').value = 'Enquiry'; $('#payDate').value = today(); $('#editLabel').textContent = 'New booking';
+renderDays(); renderPayments(); $('#copyBox').hidden = true; status(''); show('form');
+}
+function nextNo(){
+const mx = bookings.reduce((m, b) => Math.max(m, Number(String(b.no || '').replace(/\D/g, '')) || 0), 0);
+return 'KP-' + String(mx + 1).padStart(4, '0');
+}
+async function save(){
+if (saving) return;
+if (!$('#gName').value.trim() || !$('#gPhone').value.trim()){ status('Add the guest name and mobile number first.', true); ($('#gName').value.trim() ? $('#gPhone') : $('#gName')).focus(); return; }
+saving = true; $('#saveBtn').disabled = true;
+try {
+const data = collect(); let r;
+if (editing) r = await sb.from('bookings').update({data}).eq('id', editing).select('id,no').single();
+else r = await sb.from('bookings').insert({data}).select('id,no').single();
+if (r.error) throw r.error;
+editing = r.data.id; $('#editLabel').textContent = 'Editing ' + r.data.no;
+status('Saved as ' + r.data.no + '.'); await loadBookings();
+} catch (e) {
+status(e && e.code === '42501' ? 'You do not have permission to save bookings.' : 'Could not save. Check your connection and try again.', true);
+} finally { saving = false; $('#saveBtn').disabled = false; }
+}
+async function loadBookings(){
+const r = await sb.from('bookings').select('id,no,data,created_at').order('created_at', {ascending:false});
+if (r.error){ $('#listNote').textContent = 'Could not load bookings. Reload to try again.'; return; }
+$('#listNote').textContent = ''; rowsById = {};
+bookings = r.data.map(x => { rowsById[x.id] = x; return Object.assign({}, x.data, {id:x.id, no:x.no, createdAt:Date.parse(x.created_at)}); });
+renderList();
+}
+$('#saveBtn').addEventListener('click', save);
+$('#resetBtn').addEventListener('click', newBooking);
+$('#newBtn').addEventListener('click', newBooking);
+$('#backBtn').addEventListener('click', () => show('list'));
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => t.dataset.view === 'form' ? newBooking() : show('list')));
+function cardHTML(b){
+const t = b.totals || {}, st = b.status || 'Enquiry', n = (b.days || []).length, del = pendingDel === b.id;
+return `<article class="bk" data-id="${esc(b.id)}">
+<div><h3>${esc(((b.title || '') + ' ' + (b.name || '')).trim())}</h3><small>${esc(b.no || '')} · ${esc(b.phone || '')}${b.city ? ' · ' + esc(b.city) : ''}</small><span class="pill${pillClass(st)}">${esc(st)}</span></div>
+<div>${b.firstDate ? fmtD(parseD(b.firstDate)) : 'Date pending'}<small>${esc(b.fnLabel || 'Function pending')}${n > 1 ? ' · ' + n + ' days' : ''}</small></div>
+<div><b>${inr(t.grand)}</b><small>Paid ${inr(t.paid)} · Due ${inr(t.balance)}</small></div>
+<div class="acts"><select data-st aria-label="Status">${opts(STATUSES, st)}</select><button type="button" class="btn sm" data-open>Open</button><button type="button" class="btn sm ghost${del ? ' warnb' : ''}" data-del>${del ? 'Confirm delete' : 'Delete'}</button></div>
+</article>`;
+}
+function renderList(){
+const t = today(), live = bookings.filter(b => b.status !== 'Cancelled');
+const sum = f => live.reduce((s, b) => s + ((b.totals && b.totals[f]) || 0), 0);
+$('#stats').innerHTML = [['Active bookings', live.length], ['Upcoming events', live.filter(b => b.firstDate && b.firstDate >= t).length], ['Booked value', inr(sum('grand'))], ['Balance to collect', inr(sum('balance'))]]
+.map(([l, x]) => `<div class="stat"><span>${l}</span><b>${x}</b></div>`).join('');
+const q = $('#fSearch').value.trim().toLowerCase(), st = $('#fStatus').value, el = $('#bList');
+const list = bookings.filter(b => (!st || b.status === st) && (!q || [b.no, b.name, b.phone, b.city, b.fnLabel].join(' ').toLowerCase().includes(q)))
+.sort((a, b) => (a.firstDate || '9999').localeCompare(b.firstDate || '9999') || (b.createdAt || 0) - (a.createdAt || 0));
+if (!list.length){
+el.innerHTML = bookings.length ? '<p class="hint">No bookings match your search.</p>'
+: '<section class="card"><h2>No bookings yet</h2><p class="sub">Create a booking to see it here with its totals, payments and status.</p><button type="button" class="btn" data-new>Create the first booking</button></section>';
+return;
+}
+el.innerHTML = list.map(cardHTML).join('');
+}
+$('#fSearch').addEventListener('input', renderList);
+$('#fStatus').addEventListener('change', renderList);
+$('#bList').addEventListener('click', async e => {
+if (e.target.closest('[data-new]')){ newBooking(); return; }
+const card = e.target.closest('.bk'); if (!card) return;
+const id = card.dataset.id, b = bookings.find(x => x.id === id); if (!b) return;
+if (e.target.closest('[data-open]')){ editing = id; fill(b); $('#editLabel').textContent = 'Editing ' + (b.no || ''); status(''); show('form'); return; }
+if (e.target.closest('[data-del]')){
+if (pendingDel !== id){ pendingDel = id; renderList(); setTimeout(() => { if (pendingDel === id){ pendingDel = null; renderList(); } }, 4000); return; }
+pendingDel = null;
+const r = await sb.from('bookings').delete().eq('id', id); if (r.error){ status('Could not delete. Try again.', true); renderList(); } else { status('Booking deleted.'); await loadBookings(); }
+}
+});
+$('#bList').addEventListener('change', async e => {
+const s = e.target.closest('[data-st]'); if (!s) return;
+const id = s.closest('.bk').dataset.id, row = rowsById[id]; if (!row) return;
+const r = await sb.from('bookings').update({data:Object.assign({}, row.data, {status:s.value})}).eq('id', id);
+if (r.error){ status('Could not update the status.', true); renderList(); } else { status('Status updated.'); await loadBookings(); }
+});
+days = [newDay()];
+renderDays(); renderPayments();
+$('#payDate').value = today();
+show('list'); renderList();
+/* ---------- sign in ---------- */
+function gate(session){
+$('#login').hidden = !!session; $('#app').hidden = !session;
+if (session){ $('#who').textContent = session.user.email; setTimeout(loadBookings, 0); }
+else { bookings = []; rowsById = {}; $('#lPass').value = ''; }
+}
+sb.auth.onAuthStateChange((ev, session) => { if (ev === 'INITIAL_SESSION' || ev === 'SIGNED_IN' || ev === 'SIGNED_OUT') gate(session); });
+$('#loginForm').addEventListener('submit', async e => {
+e.preventDefault(); $('#lErr').textContent = ''; $('#lBtn').disabled = true;
+const r = await sb.auth.signInWithPassword({email:$('#lEmail').value.trim(), password:$('#lPass').value});
+$('#lBtn').disabled = false;
+if (r.error) $('#lErr').textContent = 'Wrong email or password.';
+});
+$('#outBtn').addEventListener('click', () => sb.auth.signOut());
+$('#pwBtn').addEventListener('click', () => { $('#pw1').value = ''; $('#pwErr').textContent = ''; $('#pwDlg').showModal(); });
+$('#pwCancel').addEventListener('click', () => $('#pwDlg').close());
+$('#pwForm').addEventListener('submit', async e => {
+e.preventDefault();
+const p = $('#pw1').value; if (p.length < 8){ $('#pwErr').textContent = 'Use at least 8 characters.'; return; }
+const r = await sb.auth.updateUser({password:p});
+if (r.error){ $('#pwErr').textContent = 'Could not change the password. Sign in again and retry.'; return; }
+$('#pwDlg').close(); status('Password changed.');
+});
+})();
+</script>
+</body></html>
